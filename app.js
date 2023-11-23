@@ -12,9 +12,10 @@ function requestHandler(req, res) {
   const controller = new requestController(req, res);
   res.setHeader("Content-Type", "application/json");
 
-  if (req.method === "GET" && req.url === "/users") {
+  if (req.url === "/users" && req.method === "GET") {
     controller.getAllUsers();
-  } else if (req.method === "POST" && req.url === "/users") {
+  } else if (req.url === "/users" && req.method === "POST") {
+    controller.createUser();
   }
 }
 
@@ -26,8 +27,8 @@ class requestController {
 
   getAllUsers() {
     if (!users) {
-      res.writeHead(404);
-      res.end(JSON.stringify("User Not found"));
+      this.res.writeHead(404);
+      this.res.end(JSON.stringify("User Not found"));
     }
 
     fs.readFile(dbPath, "utf-8", (err, data) => {
@@ -42,7 +43,57 @@ class requestController {
     });
   }
 
-  createUser() {}
+  createUser() {
+    const body = [];
+
+    this.req.on("data", (chunk) => {
+      body.push(chunk);
+    });
+
+    this.req.on("end", () => {
+      const parsedBody = Buffer.concat(body).toString();
+
+      if (!parsedBody) {
+        this.res.writeHead(400);
+        this.res.end("No data received");
+        return;
+      }
+
+      const newBook = JSON.parse(parsedBody);
+
+      fs.readFile(dbPath, "utf-8", (err, data) => {
+        if (err) {
+          console.log(err);
+          this.res.writeHead(400);
+          this.res.end("An error occured");
+        }
+
+        const oldBooks = JSON.parse(data);
+
+        const bookLength = oldBooks.length - 1;
+
+        const lastItem = oldBooks[bookLength];
+
+        newBook.id = lastItem.id + 1;
+
+        const allbooks = [...oldBooks, newBook];
+
+        fs.writeFile(dbPath, JSON.stringify(allbooks), (err) => {
+          if (err) {
+            console.log(err);
+            this.res.writeHead(400);
+            this.res.end("An error occured");
+          }
+
+          this.res.writeHead(201);
+          this.res.end({
+            message: "User Created successfully",
+            data: JSON.stringify(allbooks),
+          });
+        });
+      });
+    });
+  }
 }
 
 const server = http.createServer(requestHandler);
