@@ -18,6 +18,8 @@ function requestHandler(req, res) {
     controller.createUser();
   } else if (req.url === "/books" && req.method === "POST") {
     controller.createBook();
+  } else if (req.url.startsWith("/books") && req.method === "DELETE") {
+    controller.deleteBook();
   }
 }
 
@@ -116,6 +118,12 @@ class requestController {
       }
 
       fs.readFile(bookDB, "utf-8", (err, data) => {
+        if (err) {
+          console.log(err);
+          this.res.statusCode = 500;
+          this.res.end("An error occurred");
+        }
+
         const oldBooks = JSON.parse(data);
 
         const lastBookIndex = oldBooks.length - 1;
@@ -128,7 +136,9 @@ class requestController {
           newBook.id = lastItem.id + 1;
         }
 
-        fs.writeFile(bookDB, JSON.stringify(newBook), (err) => {
+        const allBooks = [...oldBooks, newBook];
+
+        fs.writeFile(bookDB, JSON.stringify(allBooks), (err) => {
           if (err) {
             console.log(err);
             this.res.statusCode = 500;
@@ -136,8 +146,42 @@ class requestController {
           }
 
           this.res.statusCode = 201;
-          this.res.end(JSON.stringify(newBook));
+          this.res.end(JSON.stringify(allBooks));
         });
+      });
+    });
+  }
+
+  deleteBook() {
+    const bookId = this.req.url.split("/")[2];
+
+    fs.readFile(bookDB, "utf-8", (err, data) => {
+      if (err) {
+        this.res.statusCode = 500;
+        res.end("An error occurred");
+      }
+
+      const books = JSON.parse(data);
+
+      const bookToDeletedId = books.findIndex((book) => {
+        return book.id === parseInt(bookId);
+      });
+
+      if (bookToDeletedId === -1) {
+        this.res.statusCode = 404;
+        this.res.end("Book not found");
+      }
+
+      books.splice(bookToDeletedId, 1);
+
+      fs.writeFile(bookDB, JSON.stringify(books), (err) => {
+        if (err) {
+          this.res.statusCode = 500;
+          this.res.end("An error occurred");
+        }
+
+        this.res.statusCode = 200;
+        this.res.end("Book deleted successfully");
       });
     });
   }
