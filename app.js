@@ -8,6 +8,8 @@ const usersDB = path.join(__dirname, "DB", "users.json");
 
 const bookDB = path.join(__dirname, "DB", "books.json");
 
+const loanedbookDB = path.join(__dirname, "DB", "loanedBooks.json");
+
 function requestHandler(req, res) {
   const controller = new requestController(req, res);
   res.setHeader("Content-Type", "application/json");
@@ -20,6 +22,8 @@ function requestHandler(req, res) {
     controller.createBook();
   } else if (req.url.startsWith("/books") && req.method === "DELETE") {
     controller.deleteBook();
+  } else if (req.url === "/books/loan" && req.method === "POST") {
+    controller.loanOut();
   }
 }
 
@@ -182,6 +186,61 @@ class requestController {
 
         this.res.statusCode = 200;
         this.res.end("Book deleted successfully");
+      });
+    });
+  }
+
+  loanOut() {
+    const body = [];
+
+    this.req.on("data", (chunk) => {
+      body.push(chunk);
+    });
+
+    this.req.on("end", () => {
+      const parsedBody = Buffer.concat(body).toString();
+
+      const reqBody = JSON.parse(parsedBody);
+
+      const bookId = reqBody.id;
+
+      fs.readFile(bookDB, "utf-8", (err, data) => {
+        if (err) {
+          this.res.statusCode = 500;
+          this.res.end("An error occured");
+        }
+
+        const books = JSON.parse(data);
+
+        const bookToloan = books.find((book) => book.id == bookId);
+
+        const loanedBookIndex = books.findIndex((book) => {
+          return book.id === bookId;
+        });
+
+        books.splice(loanedBookIndex, 1);
+
+        fs.writeFile(loanedbookDB, JSON.stringify(bookToloan), (err) => {
+          if (err) {
+            this.res.statusCode = 500;
+            this.res.end("An error occured");
+          }
+
+          this.res.statusCode = 200;
+          this.res.end(
+            JSON.stringify({
+              message: "Book Loaned Successfully",
+              data: bookToloan,
+            })
+          );
+        });
+
+        fs.writeFile(bookDB, JSON.stringify(books), (err) => {
+          if (err) {
+            this.res.statusCode = 500;
+            this.res.end("An Error Occured");
+          }
+        });
       });
     });
   }
