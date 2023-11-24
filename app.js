@@ -69,7 +69,7 @@ class requestController {
 
       if (!parsedBody) {
         this.res.writeHead(400);
-        this.res.end("No data received");
+        this.res.end(JSON.stringify("No data received"));
         return;
       }
 
@@ -78,8 +78,8 @@ class requestController {
       fs.readFile(usersDB, "utf-8", (err, data) => {
         if (err) {
           console.log(err);
-          this.res.writeHead(400);
-          this.res.end("An error occured");
+          this.res.writeHead(500);
+          this.res.end(JSON.stringify("An error occurred"));
         }
 
         const users = JSON.parse(data);
@@ -100,7 +100,7 @@ class requestController {
           if (err) {
             console.log(err);
             this.res.writeHead(400);
-            this.res.end("An error occured");
+            this.res.end(JSON.stringify("An error occurred"));
           }
 
           this.res.writeHead(201);
@@ -125,7 +125,7 @@ class requestController {
 
       if (!reqBody) {
         this.res.writeHead(400);
-        this.res.end("No data received");
+        this.res.end(JSON.stringify("No data received"));
         return;
       }
 
@@ -154,7 +154,7 @@ class requestController {
           if (err) {
             console.log(err);
             this.res.statusCode = 500;
-            this.res.end("An error occured");
+            this.res.end(JSON.stringify("An error occurred"));
           }
 
           this.res.statusCode = 201;
@@ -171,7 +171,7 @@ class requestController {
     fs.readFile(bookDB, "utf-8", (err, data) => {
       if (err) {
         this.res.statusCode = 500;
-        res.end("An error occurred");
+        res.end(JSON.stringify("An error occurred"));
       }
 
       const books = JSON.parse(data);
@@ -182,7 +182,7 @@ class requestController {
 
       if (bookToDeletedId === -1) {
         this.res.statusCode = 404;
-        this.res.end("Book not found");
+        this.res.end(JSON.stringify("Book not found"));
       }
 
       books.splice(bookToDeletedId, 1);
@@ -190,11 +190,11 @@ class requestController {
       fs.writeFile(bookDB, JSON.stringify(books), (err) => {
         if (err) {
           this.res.statusCode = 500;
-          this.res.end("An error occurred");
+          this.res.end(JSON.stringify("An error occurred"));
         }
 
         this.res.statusCode = 200;
-        this.res.end("Book deleted successfully");
+        this.res.end(JSON.stringify("Book deleted successfully"));
       });
     });
   }
@@ -217,7 +217,7 @@ class requestController {
       fs.readFile(bookDB, "utf-8", (err, data) => {
         if (err) {
           this.res.statusCode = 500;
-          this.res.end("An error occured");
+          this.res.end(JSON.stringify("An error occurred"));
         }
 
         const books = JSON.parse(data);
@@ -226,7 +226,7 @@ class requestController {
 
         if (!bookToloan) {
           this.res.statusCode = 404;
-          this.res.end("Book not found");
+          this.res.end(JSON.stringify("Book not found"));
           return;
         }
 
@@ -265,7 +265,7 @@ class requestController {
         fs.writeFile(bookDB, JSON.stringify(books), (err) => {
           if (err) {
             this.res.statusCode = 500;
-            this.res.end("An Error Occured");
+            this.res.end(JSON.stringify("An error occurred"));
           }
         });
       });
@@ -290,7 +290,7 @@ class requestController {
       fs.readFile(loanedbookDB, "utf-8", (err, data) => {
         if (err) {
           this.res.statusCode = 500;
-          this.res.end("An error occured");
+          this.res.end(JSON.stringify("An error occurred"));
         }
 
         const books = JSON.parse(data);
@@ -299,7 +299,7 @@ class requestController {
 
         if (!bookToReturn) {
           this.res.statusCode = 404;
-          this.res.end("Book not found");
+          this.res.end(JSON.stringify("Book not found"));
           return;
         }
 
@@ -312,7 +312,7 @@ class requestController {
         fs.readFile(bookDB, "utf-8", (err, data) => {
           if (err) {
             this.res.statusCode = 500;
-            this.res.end("An error occurred");
+            this.res.end(JSON.stringify("An error occurred"));
           }
 
           const bookShop = JSON.parse(data);
@@ -328,7 +328,7 @@ class requestController {
           fs.writeFile(bookDB, JSON.stringify(updatedBook), (err) => {
             if (err) {
               this.res.statusCode = 500;
-              this.res.end("An error occured");
+              this.res.end(JSON.stringify("An error occurred"));
             }
 
             this.res.statusCode = 200;
@@ -344,7 +344,7 @@ class requestController {
         fs.writeFile(loanedbookDB, JSON.stringify(books), (err) => {
           if (err) {
             this.res.statusCode = 500;
-            this.res.end("An Error Occured");
+            this.res.end(JSON.stringify("An error occurred"));
           }
         });
       });
@@ -367,7 +367,7 @@ class requestController {
       fs.readFile(bookDB, "utf-8", (err, data) => {
         if (err) {
           this.res.statusCode = 500;
-          this.res.end("An error occurred");
+          this.res.end(JSON.stringify("An error occurred"));
         }
 
         const books = JSON.parse(data);
@@ -376,9 +376,9 @@ class requestController {
 
         const bookUpdateIndex = books.findIndex((book) => book.id == bookId);
 
-        if (bookUpdateIndex == -1) {
+        if (bookUpdateIndex === -1) {
           this.res.statusCode = 404;
-          this.res.end("Book not found");
+          this.res.end(JSON.stringify("Book not found"));
           return;
         }
 
@@ -387,7 +387,7 @@ class requestController {
         fs.writeFile(bookDB, JSON.stringify(books), (err) => {
           if (err) {
             this.res.statusCode = 500;
-            this.res.end("An error occurred");
+            this.res.end(JSON.stringify("An error occurred"));
           }
 
           this.res.statusCode = 200;
