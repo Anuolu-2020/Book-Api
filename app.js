@@ -27,6 +27,8 @@ function requestHandler(req, res) {
     controller.loanOut();
   } else if (req.url === "/books/returnloan" && req.method === "POST") {
     controller.returnLoan();
+  } else if (req.url.startsWith("/books") && req.method === "PUT") {
+    controller.updateBook();
   }
 }
 
@@ -40,6 +42,7 @@ class requestController {
     this.res = res;
   }
 
+  //GET TOTAL USERS
   getAllUsers() {
     fs.readFile(usersDB, "utf-8", (err, data) => {
       if (err) {
@@ -53,6 +56,7 @@ class requestController {
     });
   }
 
+  //LOGIN AS A USER
   createUser() {
     const body = [];
 
@@ -106,6 +110,7 @@ class requestController {
     });
   }
 
+  //ADD A BOOK TO THE BOOKSTORE
   createBook() {
     const body = [];
 
@@ -159,6 +164,7 @@ class requestController {
     });
   }
 
+  //REMOVE A BOOK FROM THE BOOKSHOP
   deleteBook() {
     const bookId = this.req.url.split("/")[2];
 
@@ -193,6 +199,7 @@ class requestController {
     });
   }
 
+  //LOAN OUT BOOK FROM BOOKSHOP
   loanOut() {
     const body = [];
 
@@ -265,6 +272,7 @@ class requestController {
     });
   }
 
+  //RETURN LOANED BOOK
   returnLoan() {
     const body = [];
 
@@ -338,6 +346,57 @@ class requestController {
             this.res.statusCode = 500;
             this.res.end("An Error Occured");
           }
+        });
+      });
+    });
+  }
+
+  //Update a book in the bookshop
+  updateBook() {
+    const body = [];
+
+    this.req.on("data", (chunk) => {
+      body.push(chunk);
+    });
+
+    this.req.on("end", () => {
+      const parsedBody = Buffer.concat(body).toString();
+
+      const reqBody = JSON.parse(parsedBody);
+
+      fs.readFile(bookDB, "utf-8", (err, data) => {
+        if (err) {
+          this.res.statusCode = 500;
+          this.res.end("An error occurred");
+        }
+
+        const books = JSON.parse(data);
+
+        const bookId = this.req.url.split("/")[2];
+
+        const bookUpdateIndex = books.findIndex((book) => book.id == bookId);
+
+        if (bookUpdateIndex == -1) {
+          this.res.statusCode = 404;
+          this.res.end("Book not found");
+          return;
+        }
+
+        books[bookUpdateIndex] = { ...books[bookUpdateIndex], ...reqBody };
+
+        fs.writeFile(bookDB, JSON.stringify(books), (err) => {
+          if (err) {
+            this.res.statusCode = 500;
+            this.res.end("An error occurred");
+          }
+
+          this.res.statusCode = 200;
+          this.res.end(
+            JSON.stringify({
+              message: "Updated Successfully",
+              data: books,
+            })
+          );
         });
       });
     });
