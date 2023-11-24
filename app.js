@@ -12,6 +12,7 @@ const loanedbookDB = path.join(__dirname, "DB", "loanedBooks.json");
 
 function requestHandler(req, res) {
   const controller = new requestController(req, res);
+
   res.setHeader("Content-Type", "application/json");
 
   if (req.url === "/users" && req.method === "GET") {
@@ -24,6 +25,8 @@ function requestHandler(req, res) {
     controller.deleteBook();
   } else if (req.url === "/books/loan" && req.method === "POST") {
     controller.loanOut();
+  } else if (req.url === "/books/returnloan" && req.method === "POST") {
+    controller.returnLoan();
   }
 }
 
@@ -214,28 +217,123 @@ class requestController {
 
         const bookToloan = books.find((book) => book.id == bookId);
 
+        if (!bookToloan) {
+          this.res.statusCode = 404;
+          this.res.end("Book not found");
+          return;
+        }
+
         const loanedBookIndex = books.findIndex((book) => {
           return book.id === bookId;
         });
 
         books.splice(loanedBookIndex, 1);
 
-        fs.writeFile(loanedbookDB, JSON.stringify(bookToloan), (err) => {
+        fs.readFile(loanedbookDB, "utf-8", (err, data) => {
           if (err) {
             this.res.statusCode = 500;
             this.res.end("An error occured");
           }
 
-          this.res.statusCode = 200;
-          this.res.end(
-            JSON.stringify({
-              message: "Book Loaned Successfully",
-              data: bookToloan,
-            })
-          );
+          const loanBooks = JSON.parse(data);
+
+          const updatedloanBook = [...loanBooks, bookToloan];
+
+          fs.writeFile(loanedbookDB, JSON.stringify(updatedloanBook), (err) => {
+            if (err) {
+              this.res.statusCode = 500;
+              this.res.end("An error occured");
+            }
+
+            this.res.statusCode = 200;
+            this.res.end(
+              JSON.stringify({
+                message: "Book Loaned Successfully",
+                data: updatedloanBook,
+              })
+            );
+          });
         });
 
         fs.writeFile(bookDB, JSON.stringify(books), (err) => {
+          if (err) {
+            this.res.statusCode = 500;
+            this.res.end("An Error Occured");
+          }
+        });
+      });
+    });
+  }
+
+  returnLoan() {
+    const body = [];
+
+    this.req.on("data", (chunk) => {
+      body.push(chunk);
+    });
+
+    this.req.on("end", () => {
+      const parsedBody = Buffer.concat(body).toString();
+
+      const reqBody = JSON.parse(parsedBody);
+
+      const bookId = reqBody.id;
+
+      fs.readFile(loanedbookDB, "utf-8", (err, data) => {
+        if (err) {
+          this.res.statusCode = 500;
+          this.res.end("An error occured");
+        }
+
+        const books = JSON.parse(data);
+
+        const bookToReturn = books.find((book) => book.id == bookId);
+
+        if (!bookToReturn) {
+          this.res.statusCode = 404;
+          this.res.end("Book not found");
+          return;
+        }
+
+        const bookToReturnIndex = books.findIndex((book) => {
+          return book.id === bookId;
+        });
+
+        books.splice(bookToReturnIndex, 1);
+
+        fs.readFile(bookDB, "utf-8", (err, data) => {
+          if (err) {
+            this.res.statusCode = 500;
+            this.res.end("An error occurred");
+          }
+
+          const bookShop = JSON.parse(data);
+
+          const bookShopLastIndex = bookShop.length - 1;
+
+          const lastItem = bookShop[bookShopLastIndex];
+
+          bookToReturn.id = lastItem.id + 1;
+
+          const updatedBook = [...bookShop, bookToReturn];
+
+          fs.writeFile(bookDB, JSON.stringify(updatedBook), (err) => {
+            if (err) {
+              this.res.statusCode = 500;
+              this.res.end("An error occured");
+            }
+
+            this.res.statusCode = 200;
+            this.res.end(
+              JSON.stringify({
+                message: "Book Returned Successfully",
+                data: updatedBook,
+              })
+            );
+          });
+        });
+
+        fs.writeFile(loanedbookDB, JSON.stringify(books), (err) => {
           if (err) {
             this.res.statusCode = 500;
             this.res.end("An Error Occured");
