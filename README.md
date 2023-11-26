@@ -1,10 +1,20 @@
 # Book-Api
 An api server built with Nodejs. No framework used. Book api is an api for managing a bookstore 
 
-## Api features
+## Api Features
 - Create users for the books.
-    ```
+  ```
   POST http://localhost:3000/users
+  ```
+  Request body.
+  e.g
+  
+  ```
+  {
+  "name": "Anonymous Anon",
+  "email": "anony234@gmail.com",
+  "password": "mousanon"
+  }
   ```
 - Get all users using the books
   ```
