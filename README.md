@@ -49,9 +49,21 @@ An api server built with Nodejs. No framework used. Book api is an api for manag
   ```
   POST http://localhost:3000/books/loan
   ```
+  Provide id of book to be loaned in request body e.g
+  ```
+  {
+   "id": 7
+  }
+  ```
 - Return loaned books
   ```
   POST http://localhost:3000/books/returnloan
+  ```
+  Provide id of loaned book to be returned in request body e.g
+  ```
+  {
+   "id": 5
+  }
   ```
 - Built in authentication for books route
 - Api key needed to use book routes (can be found in .env file)
