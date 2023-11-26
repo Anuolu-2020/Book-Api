@@ -35,7 +35,15 @@ An api server built with Nodejs. No framework used. Book api is an api for manag
   ```
 - Update books
   ```
-  PUT http://localhost:3000/books
+  PUT http://localhost:3000/books/id
+  ```
+  Request Body
+  e.g provide an id in the route parameter
+  ```
+  {
+   "author": "Mike Trenor",
+   "year": 2018
+  }
   ```
 - Loan out books
   ```
