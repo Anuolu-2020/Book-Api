@@ -11,9 +11,9 @@ An api server built with Nodejs. No framework used. Book api is an api for manag
   
   ```
   {
-  "name": "Anonymous Anon",
-  "email": "anony234@gmail.com",
-  "password": "mousanon"
+   "name": "Anonymous Anon",
+   "email": "anony234@gmail.com",
+   "password": "mousanon"
   }
   ```
 - Get all users using the books
@@ -23,6 +23,15 @@ An api server built with Nodejs. No framework used. Book api is an api for manag
 - Create books
   ```
   POST http://localhost:3000/books
+  ```
+  Request body.
+  e.g
+  ```
+   {
+    "name": "Messi Glory",
+    "Author": "La Miasia",
+    "year": 2017
+   }
   ```
 - Update books
   ```
