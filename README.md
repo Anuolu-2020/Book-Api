@@ -1,7 +1,7 @@
 # Book-Api
-An api server built with Nodejs. No framework used.
+An api server built with Nodejs. No framework used. Book api is an api for managing a bookstore 
 
-# Api features
+## Api features
 - Create users for the books
 - Get all users using the books
 - Create books
@@ -10,3 +10,4 @@ An api server built with Nodejs. No framework used.
 - Return loaned books
 - Built in authentication for books route
 - Api key needed to use book routes (can be found in .env file)
+
