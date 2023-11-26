@@ -1,1 +1,5 @@
-[{"name":"The Brigdes","author":"Joe Eden","year":2008,"id":1},{"name":"The Great Book","author":"Mike Dean","year":2020,"id":2},{"name":"Grass To Grace","year":2018,"id":3,"author":"Mike Trenor"}]
+[
+  { "name": "The Brigdes", "author": "Joe Eden", "year": 2008, "id": 1 },
+  { "name": "The Great Book", "author": "Mike Dean", "year": 2020, "id": 2 },
+  { "name": "Grass To Grace", "year": 2018, "id": 3, "author": "Mike Trenor" }
+]

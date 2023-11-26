@@ -1,1 +1,20 @@
-[{"name":"Premise Ogno","email":"premise12@gmail.com","id":1},{"name":"Emmanuel Anu","email":"emmanu45@gmail.com","id":2}]
+[
+  {
+    "name": "Emmanuel Anu",
+    "email": "emmanu45@gmail.com",
+    "password": "Anuolu123",
+    "id": 1
+  },
+  {
+    "name": "Bruce cale",
+    "email": "calbruce30@gmail.com",
+    "password": "Brucale23",
+    "id": 2
+  },
+  {
+    "name": "Redon Demond",
+    "email": "redemond67@gmail.com",
+    "password": "mondeon20",
+    "id": 3
+  }
+]
