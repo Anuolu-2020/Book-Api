@@ -66,5 +66,8 @@ An api server built with Nodejs. No framework used. Book api is an api for manag
   }
   ```
 - Built in authentication for books route
+  
+  Provide the apikey in the request header of the request
+  
 - Api key needed to use book routes (can be found in .env file)
 
