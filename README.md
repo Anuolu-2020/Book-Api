@@ -4,4 +4,9 @@ An api server built with Nodejs. No framework used.
 # Api features
 - Create users for the books
 - Get all users using the books
--
+- Create books
+- Update books
+- Loan out books
+- Return loaned books
+- Built in authentication for books route
+- Api key needed to use book routes (can be found in .env file)
