@@ -38,7 +38,7 @@ An api server built with Nodejs. No framework used. Book api is an api for manag
   PUT http://localhost:3000/books/id
   ```
   Request Body
-  e.g provide an id in the route parameter
+  e.g provide an id in the route parameter. Then provide request body for the update 
   ```
   {
    "author": "Mike Trenor",
@@ -65,6 +65,13 @@ An api server built with Nodejs. No framework used. Book api is an api for manag
    "id": 5
   }
   ```
+- Delete book
+  ```
+  DELETE http://localhost:3000/books/books/id
+  ```
+  
+  Provide id of book to be deleted in the request parameter
+   
 - Built in authentication for books route
   
   Provide the apikey in the request header of the request
