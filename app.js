@@ -10,6 +10,8 @@ const bookDB = path.join(__dirname, "DB", "books.json");
 
 const loanedbookDB = path.join(__dirname, "DB", "loanedBooks.json");
 
+const { authenticateUser } = require("./auth");
+
 function requestHandler(req, res) {
   const controller = new requestController(req, res);
 
@@ -20,15 +22,73 @@ function requestHandler(req, res) {
   } else if (req.url === "/users" && req.method === "POST") {
     controller.createUser();
   } else if (req.url === "/books" && req.method === "POST") {
-    controller.createBook();
+    authenticateUser(req, res)
+      .then(() => {
+        controller.createBook();
+      })
+      .catch((err) => {
+        res.statusCode = 401;
+        res.end(
+          JSON.stringify({
+            error: err,
+          })
+        );
+      });
   } else if (req.url.startsWith("/books") && req.method === "DELETE") {
-    controller.deleteBook();
+    authenticateUser(req, res)
+      .then(() => {
+        controller.deleteBook();
+      })
+      .catch((err) => {
+        res.statusCode = 401;
+        res.end(
+          JSON.stringify({
+            error: err,
+          })
+        );
+      });
   } else if (req.url === "/books/loan" && req.method === "POST") {
-    controller.loanOut();
+    authenticateUser(req, res)
+      .then(() => {
+        controller.loanOut();
+      })
+      .catch((err) => {
+        res.statusCode = 401;
+        res.end(
+          JSON.stringify({
+            error: err,
+          })
+        );
+      });
   } else if (req.url === "/books/returnloan" && req.method === "POST") {
-    controller.returnLoan();
+    authenticateUser(req, res)
+      .then(() => {
+        controller.returnLoan();
+      })
+      .catch((err) => {
+        res.statusCode = 401;
+        res.end(
+          JSON.stringify({
+            error: err,
+          })
+        );
+      });
   } else if (req.url.startsWith("/books") && req.method === "PUT") {
-    controller.updateBook();
+    authenticateUser(req, res)
+      .then(() => {
+        controller.updateBook();
+      })
+      .catch((err) => {
+        res.statusCode = 401;
+        res.end(
+          JSON.stringify({
+            error: err,
+          })
+        );
+      });
+  } else {
+    res.statusCode = 404;
+    res.end("Api Route Not Found");
   }
 }
 
